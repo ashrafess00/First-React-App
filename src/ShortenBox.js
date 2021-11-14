@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const ShortenBox = () => {
   const [link, setLink] = useState("");
@@ -6,6 +6,29 @@ const ShortenBox = () => {
   const [isValid, setIsValid] = useState(true);
 
   const [isEmpty, setIsEmpty] = useState(true);
+
+  const shortenInput = useRef(null)
+
+  useEffect(()=>{
+    async function initialCall() {
+      const response = await fetch(
+        "https://api.shrtco.de/v2/shorten?url=facebook.com"
+      );
+    }
+    initialCall()
+    
+  },[])
+
+  try{
+    shortenInput.current.onkeyup = (e)=>{
+      if(e.keyCode == 13){
+        link !== "" ? get(link) : setIsEmpty(false)
+      }
+    }
+  }
+  catch(e){
+    
+  }
 
   async function get() {
     const response = await fetch(
@@ -22,6 +45,8 @@ const ShortenBox = () => {
     setIsEmpty(true);
   }
 
+
+
   return (
     <>
       <div className="shortenBox">
@@ -31,6 +56,7 @@ const ShortenBox = () => {
           placeholder="shorten a link"
           onChange={(e) => setLink(e.target.value)}
           className={isEmpty == false ? "input-error" : ""}
+          ref={shortenInput}
         />
         {isEmpty || <p className="errorMessage">please add a link</p>}
         {isValid || <p className="errorMessage">the link is unvalid</p>}
